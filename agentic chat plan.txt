@@ -1,0 +1,44 @@
+Onglet "RAG Chat"
+
+Backend : Ollama (déjà en place) + un modèle embedding (nomic-embed-text ou mxbai-embed-large, tourne bien en local)
+Base vectorielle : ChromaDB ou LanceDB (légers, tournent en local sans serveur externe)
+Pipeline : chunking du doc → embedding → stockage → retrieval top-k → injection dans le prompt du LLM
+Modèle chat : Llama 3.1 8B ou Qwen 2.5 7B (Q4) via Ollama
+
+Onglet "Agentic Chat"
+
+Framework léger : LangGraph ou un mini-orchestrateur maison (boucle ReAct : penser → appeler outil → observer → répéter)
+Outils de base à donner à l'agent : recherche web (API), lecture de fichier, calculatrice, exécution de code Python sandboxé
+Attention : les petits modèles (7-8B) sont moyens en "tool calling" fiable — teste avec Qwen 2.5 ou Llama 3.1, qui gèrent ça correctement
+
+Onglet "Pre-train"
+
+Réaliste : pas de pré-entraînement complet (irréaliste sur CPU même avec 32 Go), mais du fine-tuning léger (LoRA/QLoRA) sur un petit modèle (1-3B) est jouable, lentement
+Outils : Hugging Face transformers + peft, ou unsloth (optimisé, mais support ARM/CPU à vérifier au moment de l'installer)
+À défaut, prévois cet onglet comme "fine-tuning" plutôt que "pre-train" — plus honnête et faisable
+
+Onglet "Analytics"
+
+Métriques à logger par requête : temps avant premier token (TTFT), tokens/sec en génération, nombre de tokens prompt/réponse, latence totale, modèle utilisé
+Récupération : Ollama expose ces infos dans sa réponse API (eval_count, eval_duration, prompt_eval_duration, etc.) — pas besoin de les recalculer toi-même
+Stockage : simple SQLite local, suffisant pour un usage perso
+Affichage : graphique simple (tokens/sec dans le temps, comparaison entre modèles/agents)
+
+
+
+=====
+
+
+
+
+mon-app/
+├── apps/
+│   ├── web/          → ton frontend Next.js
+│   └── api/          → ton backend (Node/Python selon ton choix)
+├── packages/
+│   ├── ui/            → composants partagés (si besoin)
+│   ├── db/             → schéma Drizzle partagé
+│   └── config/         → configs ESLint/TS partagées
+├── turbo.json
+├── pnpm-workspace.yaml
+└── package.json
