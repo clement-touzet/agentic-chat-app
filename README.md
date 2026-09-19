@@ -1,0 +1,4 @@
+
+```
+fastapi dev main.py
+```
